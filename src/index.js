@@ -2,32 +2,27 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 class App extends React.Component {
-  //alway need constructor(props) to initualize the state and need super(props) when using constructor
-  constructor(props) {
-    super(props);
+  state = { lat: null, errorMessage: "" };
 
-    this.state = { lat: null, errorMessage: "" };
-    // this.state = { lat: null, long: null };
-
+  componentDidMount() {
     window.navigator.geolocation.getCurrentPosition(
-      position => {
-        //call setState to update location
-        this.setState({ lat: position.coords.latitude });
-      },
-      err => {
-        this.setState({ errorMessage: err.message });
-      }
+      position => this.setState({ lat: position.coords.latitude }),
+      err => this.setState({ errorMessage: err.message })
     );
   }
 
   // we need to define render
   render() {
-    return (
-      <div>
-        Latitude: {this.state.lat} <br />
-        Error: {this.state.errorMessage}
-      </div>
-    );
+    if (this.state.errorMessage && !this.state.lat) {
+      //have error but not have lat
+      return <div>Error: {this.state.errorMessage}</div>;
+    }
+
+    if (!this.state.errorMessage && this.state.lat) {
+      return <div>Latitude: {this.state.lat}</div>;
+    }
+
+    return <div>Loading!!!</div>;
   }
 }
 
